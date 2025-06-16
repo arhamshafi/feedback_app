@@ -9,6 +9,7 @@ function Context({ children }) {
   let [input, setinput] = useState({ name: "", email: "", password: "" })
   let [alert, setalert] = useState(false)
   let [sms, setsms] = useState(null)
+  let navigation = useNavigate()
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -22,10 +23,9 @@ function Context({ children }) {
   }
 
   function login_or_sign_up() {
-
-    let navigation = useNavigate()
+    
     let localusers = JSON.parse(localStorage.getItem("users") || "[]")
-
+    
     if (sign_up) {
       let emailexists = localusers.some(user => user.email === input.email)
       if (emailexists) {
@@ -33,18 +33,21 @@ function Context({ children }) {
         setalert(true)
         return;
       }
-      if (input.name == "" || input.email == "" || input.password) {
+      if (input.name === "" || input.email === "" || input.password === "") {
         setsms("Fill Your Form !!")
         setalert(true)
         return;
       }
-
+      
       localusers.push(input)
       localStorage.setItem("users", JSON.stringify(localusers))
+      localStorage.setItem("current_user", JSON.stringify(input))
       setinput({ name: "", email: "", password: "" })
       setsms("Account Created Successfully...")
       setalert(true)
-      navigation("/socail")
+      setTimeout(() => {
+        navigation("/socail")
+      }, 1000);
     }
     else {
       if (input.password == "" || input.email == "") {
@@ -54,11 +57,13 @@ function Context({ children }) {
       }
       let match_user = localusers.find(user => user.email === input.email && user.password === input.password)
       if (match_user) {
-        localStorage.setItem("current_user", match_user)
+        localStorage.setItem("current_user", JSON.stringify(match_user))
         // alert(`welcome back , ${match_user.name}`)
         setsms("Login Successfully...")
         setalert(true)
-        navigation("/socail")
+        setTimeout(() => {
+          navigation("/socail")
+        }, 1000);
 
       }
       else {
