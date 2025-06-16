@@ -4,20 +4,25 @@ import { appcontext } from './context';
 
 function Login_page() {
 
+  let time = new Date().toISOString()
+  console.log(time);
+  
 
-  let { sign_up, setsign_up , handler , input , login_or_sign_up , alert , alrt_ref , sms} = useContext(appcontext)
+
+  let { sign_up, setsign_up, handler, input, login_or_sign_up, alert, sms } = useContext(appcontext)
 
   return (
     <StyledWrapper>
       <div className="form-container">
+        
         <p className="title">{sign_up ? "Login Your Account" : "Welcome back"}</p>
-        { alert && <p className={`text-center mt-[-15px] p-0 font-bold ${sms?.includes("Successfully")? "text-green-500" : "text-red-600"} `}>{sms}</p>   }
+        {alert && <p className={`text-center mt-[-15px] p-0 font-bold ${sms?.includes("Successfully") ? "text-green-500" : "text-red-600"} `}>{sms}</p>}
         <form className="form mt-4" onSubmit={(e) => e.preventDefault()}>
           {
             sign_up && <input type="text" className='input' placeholder='User_name' name='name' value={input.name} onChange={handler} />
           }
-          <input type="email" className="input" placeholder="Email"  name='email' value={input.email} onChange={handler}  />
-          <input type="password" className="input" placeholder="Password"  name='password' value={input.password} onChange={handler}  />
+          <input type="email" className="input" placeholder="Email" name='email' value={input.email} onChange={handler} />
+          <input type="password" className="input" placeholder="Password" name='password' value={input.password} onChange={handler} />
 
           <p className="page-link">
             <span className="page-link-label">Forgot Password?</span>

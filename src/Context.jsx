@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const appcontext = createContext()
 
@@ -6,24 +7,25 @@ function Context({ children }) {
 
   let [sign_up, setsign_up] = useState(false)
   let [input, setinput] = useState({ name: "", email: "", password: "" })
-  let [alert , setalert] = useState(false)
-  let [sms , setsms] = useState(null)
-  
-  useEffect(()=>{
+  let [alert, setalert] = useState(false)
+  let [sms, setsms] = useState(null)
+
+  useEffect(() => {
     let timer = setTimeout(() => {
-        setalert(false)  
-    },1500);
+      setalert(false)
+    }, 1500);
     return () => { clearTimeout(timer) }
-  },[alert])
+  }, [alert])
 
   function handler(e) {
     setinput({ ...input, [e.target.name]: e.target.value })
   }
 
   function login_or_sign_up() {
-    
+
+    let navigation = useNavigate()
     let localusers = JSON.parse(localStorage.getItem("users") || "[]")
-    
+
     if (sign_up) {
       let emailexists = localusers.some(user => user.email === input.email)
       if (emailexists) {
@@ -31,7 +33,7 @@ function Context({ children }) {
         setalert(true)
         return;
       }
-      if( input.name == "" || input.email == "" || input.password ){
+      if (input.name == "" || input.email == "" || input.password) {
         setsms("Fill Your Form !!")
         setalert(true)
         return;
@@ -42,28 +44,30 @@ function Context({ children }) {
       setinput({ name: "", email: "", password: "" })
       setsms("Account Created Successfully...")
       setalert(true)
+      navigation("/socail")
     }
-    else{
-      if(input.password == "" || input.email == ""){
+    else {
+      if (input.password == "" || input.email == "") {
         setsms("Fill to Login 🧷")
         setalert(true)
         return;
       }
-      let match_user = localusers.find( user => user.email === input.email && user.password === input.password )
-      if(match_user){
-          localStorage.setItem("current_user" , match_user)
-          // alert(`welcome back , ${match_user.name}`)
-          setsms("Login Successfully...")
-          setalert(true)
-          
+      let match_user = localusers.find(user => user.email === input.email && user.password === input.password)
+      if (match_user) {
+        localStorage.setItem("current_user", match_user)
+        // alert(`welcome back , ${match_user.name}`)
+        setsms("Login Successfully...")
+        setalert(true)
+        navigation("/socail")
+
       }
-      else{
+      else {
         // alert("Invalid Credentials")
         setsms("Invalid Credentials")
         setalert(true)
-        setinput({...input , password:""})
+        setinput({ ...input, password: "" })
       }
-      
+
     }
 
   }
@@ -74,7 +78,7 @@ function Context({ children }) {
       input,
       handler,
       login_or_sign_up,
-      alert , setalert,
+      alert, setalert,
       sms
     }}>
       {children}
