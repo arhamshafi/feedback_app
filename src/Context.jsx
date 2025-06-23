@@ -10,6 +10,7 @@ function Context({ children }) {
   let [alert, setalert] = useState(false)
   let [sms, setsms] = useState(null)
   let navigation = useNavigate()
+  let crtn_user = JSON.parse(localStorage.getItem("current_user") || null)
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -23,9 +24,9 @@ function Context({ children }) {
   }
 
   function login_or_sign_up() {
-    
+
     let localusers = JSON.parse(localStorage.getItem("users") || "[]")
-    
+
     if (sign_up) {
       let emailexists = localusers.some(user => user.email === input.email)
       if (emailexists) {
@@ -38,8 +39,9 @@ function Context({ children }) {
         setalert(true)
         return;
       }
-      
-      localusers.push(input)
+
+      localusers.push({ ...input, id: Date.now().toString() })
+      // user ko  unique id deni ha tak access kr sky or working smooth ho ...
       localStorage.setItem("users", JSON.stringify(localusers))
       localStorage.setItem("current_user", JSON.stringify(input))
       setinput({ name: "", email: "", password: "" })
@@ -47,6 +49,8 @@ function Context({ children }) {
       setalert(true)
       setTimeout(() => {
         navigation("/socail")
+        setsign_up(false)
+        setinput({ name: "", email: "", password: "" })
       }, 1000);
     }
     else {
@@ -63,6 +67,7 @@ function Context({ children }) {
         setalert(true)
         setTimeout(() => {
           navigation("/socail")
+          setinput({ name: "", email: "", password: "" })
         }, 1000);
 
       }
@@ -77,6 +82,11 @@ function Context({ children }) {
 
   }
 
+  function logout() {
+    localStorage.setItem("current_user", JSON.stringify(""))
+    navigation("/")
+  }
+
   return (
     <appcontext.Provider value={{
       sign_up, setsign_up,
@@ -84,7 +94,10 @@ function Context({ children }) {
       handler,
       login_or_sign_up,
       alert, setalert,
-      sms
+      sms,
+      crtn_user,
+      logout
+
     }}>
       {children}
     </appcontext.Provider>
